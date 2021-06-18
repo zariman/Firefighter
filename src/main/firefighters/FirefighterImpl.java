@@ -6,15 +6,26 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class FirefighterImpl implements Firefighter {
 
+  private CityNode location = new CityNode(0, 0);
+  private int distanceTraveled = 0;
+
   @Override
   public CityNode getLocation() {
     // TODO
-    throw new NotImplementedException();
+    return location;
+  }
+
+  public void setLocation(CityNode cityNode) {
+    this.location = cityNode;
   }
 
   @Override
   public int distanceTraveled() {
     // TODO
-    throw new NotImplementedException();
+    return distanceTraveled;
+  }
+
+  public void setDistanceTraveled(int distance){
+    this.distanceTraveled = distance;
   }
 }
