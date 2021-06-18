@@ -13,29 +13,25 @@ public class FireDispatchImpl implements FireDispatch {
   private List<Firefighter> firefighters;
 
   public FireDispatchImpl(City city) {
-    // TODO
     this.city = city;
   }
 
   @Override
   public void setFirefighters(int numFirefighters) {
-    // TODO
     firefighters = new ArrayList<>();
 
     for (int i = 0; i < numFirefighters; i++) {
-      firefighters.add(new FirefighterImpl());
+      firefighters.add(new FirefighterImpl(city));
     }
   }
 
   @Override
   public List<Firefighter> getFirefighters() {
-    // TODO
     return firefighters;
   }
 
   @Override
   public void dispatchFirefighers(CityNode... burningBuildings) {
-    // TODO
     for(CityNode burningBuilding : burningBuildings) {
       // Dispatch firefighter to the burning building
       ((FirefighterImpl)closestFireFighter(burningBuilding)).setLocation(burningBuilding);
