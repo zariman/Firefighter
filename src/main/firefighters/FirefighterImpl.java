@@ -19,6 +19,7 @@ public class FirefighterImpl implements Firefighter {
     return location;
   }
 
+  @Override
   public void setLocation(CityNode cityNode) {
     this.location = cityNode;
   }
@@ -28,6 +29,7 @@ public class FirefighterImpl implements Firefighter {
     return distanceTraveled;
   }
 
+  @Override
   public void setDistanceTraveled(int distance){
     this.distanceTraveled = distance;
   }

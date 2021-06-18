@@ -5,6 +5,7 @@ import java.util.List;
 
 import main.api.*;
 import main.api.exceptions.NoFireFoundException;
+import main.api.exceptions.NoFirefightersFoundException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class FireDispatchImpl implements FireDispatch {
@@ -33,25 +34,38 @@ public class FireDispatchImpl implements FireDispatch {
   @Override
   public void dispatchFirefighers(CityNode... burningBuildings) {
     for(CityNode burningBuilding : burningBuildings) {
-      // Dispatch firefighter to the burning building
-      ((FirefighterImpl)closestFireFighter(burningBuilding)).setLocation(burningBuilding);
-
       try {
+        // Dispatch firefighter to the burning building. Throws exception if no closest firefighter is found in the city
+        Firefighter closestFireFighter = closestFireFighter(burningBuilding);
+        closestFireFighter.setLocation(burningBuilding);
+
         // Extinguish fire at the burning building
         city.getBuilding(burningBuilding).extinguishFire();
-      } catch(NoFireFoundException ex) {
+
+      } catch(NoFireFoundException | NoFirefightersFoundException ex) {
         System.out.println(ex.getMessage());
       }
     }
   }
 
   // Finds the closest firefighter from the burning building
-  private Firefighter closestFireFighter(CityNode burningBuilding) {
+  private Firefighter closestFireFighter(CityNode burningBuilding) throws NoFirefightersFoundException {
+    if(this.firefighters == null) {
+      throw new NoFirefightersFoundException();
+    }
+
     int min = Integer.MAX_VALUE;
     Firefighter closestFireFighter = null;
 
     for(Firefighter firefighter : firefighters) {
       int distance = distanceToFire(firefighter, burningBuilding);
+
+      // Return first firefighter who is only 1 distance away since that is the minimum distance possible
+      if(distance == 1) {
+        firefighter.setDistanceTraveled(firefighter.distanceTraveled() + 1);
+        return firefighter;
+      }
+
       if(distance < min) {
         min = distance;
         closestFireFighter = firefighter;
@@ -59,14 +73,17 @@ public class FireDispatchImpl implements FireDispatch {
     }
 
     // Add distance traveled to the closest firefighter
-    ((FirefighterImpl)closestFireFighter).setDistanceTraveled(closestFireFighter.distanceTraveled() + min);
+    if(closestFireFighter == null) {
+      throw new NoFirefightersFoundException();
+    }
+
+    closestFireFighter.setDistanceTraveled(closestFireFighter.distanceTraveled() + min);
     return closestFireFighter;
   }
 
   // Measures distance between two coordinates
   private int distanceToFire(Firefighter firefighter, CityNode burningBuilding) {
-    int distance = Math.abs(burningBuilding.getX() - firefighter.getLocation().getX()) +
+    return Math.abs(burningBuilding.getX() - firefighter.getLocation().getX()) +
             Math.abs(burningBuilding.getY() - firefighter.getLocation().getY());
-    return distance;
   }
 }
